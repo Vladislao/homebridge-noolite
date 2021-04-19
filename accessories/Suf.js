@@ -81,7 +81,7 @@ class Suf extends AccessoryBase {
     let command = new NooLiteRequest(this.nlChannel, 128, 2, 0, 0, 0, 0, 0, 0, 0, ...this.nlId.split(':'));
 
     if (this.platform.immediatelyResponse){
-      return callback(null, acc.value);
+      return callback(null, acc.value || false);
     }
 
     this.platform.sendCommand(command, (err, nlRes) => {
