@@ -15,20 +15,22 @@ class Slf extends AccessoryBase {
   }
 
   createPeriodicTasks() {
-    super.initOrCreateServices();
-    if (this.platform.periodicAccessoryUpdate) {
-      setInterval(() => {
-        this.log('send periodically update command');
-        let command = new NooLiteRequest(this.nlChannel, 128, 2, 0, 0, 0, 0, 0, 0, 0, ...this.nlId.split(':'));
-        this.platform.sendCommand(command, (err, nlRes) => {})
-      }, this.platform.periodicAccessoryUpdate * 1000);
-    }
+    if (!this.platform.periodicAccessoryUpdate) return;
+
+    setInterval(() => {
+      this.log('send periodically update command');
+      let command = new NooLiteRequest(this.nlChannel, 128, 2, 0, 0, 0, 0, 0, 0, 0, ...this.nlId.split(':'));
+      this.platform.sendCommand(command, () => {});
+    }, this.platform.periodicAccessoryUpdate * 1000);
   }
 
   initOrCreateServices() {
     super.initOrCreateServices();
 
-    let onCharacteristic = this.getOrCreateService(this.platform.Service.Lightbulb).getCharacteristic(this.platform.Characteristic.On);
+    const onCharacteristic = this.getOrCreateService(this.platform.Service.Lightbulb).getCharacteristic(this.platform.Characteristic.On);
+
+    this.state.on = onCharacteristic.value || false;
+
     onCharacteristic
       .on('set', this.setOnState.bind(this))
       .on('get', this.getOnState.bind(this));
@@ -46,10 +48,10 @@ class Slf extends AccessoryBase {
         //      2 – временное включение
         // d3 - Текущая яркость (0-255)
 
-        let onValue = nlCmd.d2 > 0;
+        this.state.on = nlCmd.d2 > 0;
 
-        if (onCharacteristic.value !== onValue) {
-            onCharacteristic.updateValue(onValue);
+        if (onCharacteristic.value !== this.state.on) {
+            onCharacteristic.updateValue(this.state.on);
         }
       }
     });
@@ -57,14 +59,12 @@ class Slf extends AccessoryBase {
 
   getOnState(callback) {
     this.log("get value");
-    let acc = this.accessory;
-
-    let command = new NooLiteRequest(this.nlChannel, 128, 2, 0, 0, 0, 0, 0, 0, 0, ...this.nlId.split(':'));
     
     if (this.platform.immediatelyResponse){
-      return callback(null, acc.value || false);
+      return callback(null, this.state.on);
     }
 
+    let command = new NooLiteRequest(this.nlChannel, 128, 2, 0, 0, 0, 0, 0, 0, 0, ...this.nlId.split(':'));
     this.platform.sendCommand(command, (err, nlRes) => {
       if (err) {
         this.log('Error on write: ', err.message);
@@ -74,7 +74,7 @@ class Slf extends AccessoryBase {
         return callback(new Error('Error on response'));
       }
 
-      let onValue = acc.value;
+      let onValue = this.state.on;
 
       if (nlRes.isState() && nlRes.fmt === 0) {
         onValue = nlRes.d2 > 0;
