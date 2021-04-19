@@ -62,22 +62,16 @@ class Slf extends AccessoryBase {
     let command = new NooLiteRequest(this.nlChannel, 128, 2, 0, 0, 0, 0, 0, 0, 0, ...this.nlId.split(':'));
     
     if (this.platform.immediatelyResponse){
-      callback(null, acc.value);
+      return callback(null, acc.value);
     }
 
     this.platform.sendCommand(command, (err, nlRes) => {
       if (err) {
         this.log('Error on write: ', err.message);
-        if (!this.platform.immediatelyResponse){
-          callback(new Error('Error on write'));
-        }
-        return;
+        return callback(new Error('Error on write'));
       } else if (nlRes.isError()) {
         this.log('Error on response: ', nlRes);
-        if (!this.platform.immediatelyResponse){
-          callback(new Error('Error on response'));
-        }
-        return;
+        return callback(new Error('Error on response'));
       }
 
       let onValue = acc.value;
@@ -85,10 +79,8 @@ class Slf extends AccessoryBase {
       if (nlRes.isState() && nlRes.fmt === 0) {
         onValue = nlRes.d2 > 0;
       }
-      if (!this.platform.immediatelyResponse){
-        callback(null, onValue);  
-      }
-      
+
+      return callback(null, onValue);        
     })
 
   }
