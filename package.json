@@ -1,6 +1,6 @@
 {
-  "name": "homebridge-noolite",
-  "version": "0.6.1",
+  "name": "@vladislao/homebridge-noolite",
+  "version": "0.6.2",
   "description": "NooLite plugin for Homebridge",
   "keywords": [
     "homebridge-plugin",
@@ -8,14 +8,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/AlekseevAV/homebridge-noolite.git"
+    "url": "https://github.com/Vladislao/homebridge-noolite.git"
   },
   "author": "Aleksandr Alekseev",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/AlekseevAV/homebridge-noolite/issues"
+    "url": "https://github.com/Vladislao/homebridge-noolite/issues"
   },
-  "homepage": "https://github.com/AlekseevAV/homebridge-noolite",
+  "homepage": "https://github.com/Vladislao/homebridge-noolite",
   "engines": {
     "node": ">=0.12.0",
     "homebridge": ">=0.4.1"
