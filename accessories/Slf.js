@@ -19,7 +19,7 @@ class Slf extends AccessoryBase {
 
     setInterval(() => {
       this.log('send periodically update command');
-      let command = new NooLiteRequest(this.nlChannel, 128, 2, 0, 0, 0, 0, 0, 0, 0, ...this.nlId.split(':'));
+      const command = new NooLiteRequest(this.nlChannel, 128, 2, 0, 0, 0, 0, 0, 0, 0, ...this.nlId.split(':'));
       this.platform.sendCommand(command, () => {});
     }, this.platform.periodicAccessoryUpdate * 1000);
   }
@@ -64,7 +64,7 @@ class Slf extends AccessoryBase {
       return callback(null, this.state.on);
     }
 
-    let command = new NooLiteRequest(this.nlChannel, 128, 2, 0, 0, 0, 0, 0, 0, 0, ...this.nlId.split(':'));
+    const command = new NooLiteRequest(this.nlChannel, 128, 2, 0, 0, 0, 0, 0, 0, 0, ...this.nlId.split(':'));
     this.platform.sendCommand(command, (err, nlRes) => {
       if (err) {
         this.log('Error on write: ', err.message);
